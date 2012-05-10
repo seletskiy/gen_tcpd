@@ -1,0 +1,11 @@
+% ex: ft=erlang
+{application, gen_tcpd, [
+	{description, "Generic TCP daemon."},
+	{vsn, git},
+	{registered, []},
+	{applications, [
+		kernel,
+		stdlib,
+		sasl]},
+	{mod, {gen_tcpd, []}},
+	{env, []}]}.
