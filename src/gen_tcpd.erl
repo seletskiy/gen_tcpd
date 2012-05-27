@@ -78,7 +78,7 @@ unbind(Port) ->
 %% @doc Sends `Data' to socket, linked to connection with pid `Pid'.
 -spec send(pid(), list()) -> ok.
 send(Pid, Data) ->
-    gen_server:cast(Pid, {send, Data}).
+	gen_server:cast(Pid, {send, Data}).
 
 %% @doc Switch socket to active state.
 %%      `recv/2' from callback module will be callbed,
