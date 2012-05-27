@@ -18,7 +18,7 @@
 start(Port) ->
 	gen_tcpd:bind(
 		Port, {?MODULE, init, []},
-		[{listener, [
+		[{socket, [
 			{active, true},
 			{reuseaddr, true}]}]).
 
@@ -34,7 +34,7 @@ init(ConnPid) ->
 %% @doc Will be called when some data received by socket.
 -spec recv(pid(), list()) -> {pid()}.
 recv(State = ConnPid, Data) ->
-	gen_tcpd_conn:send(ConnPid, Data),
+	gen_tcpd:send(ConnPid, Data),
 	State.
 
 %% @doc Will be called on socket close or system shutdown.

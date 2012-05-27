@@ -19,10 +19,6 @@
 -behaviour(gen_server).
 
 -export([
-    send/2,
-	activate/1,
-	activate/2,
-	close/1,
     start_link/2,
     init/1,
     handle_call/3,
@@ -45,29 +41,6 @@
 -spec start_link(gen_tcp:socket(), mfa()) -> {ok, pid()}.
 start_link(Socket, MFA) ->
     gen_server:start_link(?MODULE, [Socket, MFA], []).
-
-
-%% @doc Sends `Data' to socket, linked to connection with pid `Pid'.
--spec send(pid(), list()) -> ok.
-send(Pid, Data) ->
-    gen_server:cast(Pid, {send, Data}).
-
-%% @doc Switch socket to active state.
-%%      `recv/2' from callback module will be callbed,
-%%      when some data arrived at socket.
--spec activate(pid()) -> ok.
-activate(Pid) ->
-	activate(Pid, 0).
-
-%% @doc Switches socket to active state in buffered mode.
-%%      `recv/2' from callback module will be called only after
-%%      `BufferSize' bytes was arrived at socket.
-activate(Pid, BufferSize) ->
-	gen_server:cast(Pid, {activate, BufferSize}).
-
-%% @doc Closes connection.
-close(Pid) ->
-	gen_server:cast(Pid, close).
 
 %% ---------------------------------------------------------------------
 %% Private methods (закрытые методы).
