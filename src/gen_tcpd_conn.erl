@@ -78,11 +78,9 @@ handle_cast({activate, BufferSize}, State = #state{buffer_pid = undefined}) ->
 	{noreply, State#state{
 		buffer_pid = BufferPid}};
 
-%% @private
 handle_cast({activate, _}, State) ->
 	{noreply, State};
 
-%% @private
 handle_cast({send, Data}, State) ->
 	#state{sock = Socket} = State,
 	gen_tcp:send(Socket, Data),
@@ -93,7 +91,6 @@ handle_cast(close, State) ->
 	gen_tcp:close(Socket),
 	{stop, normal, State};
 
-%% @private
 handle_cast(_Message, State) ->
 	{noreply, State}.
 
@@ -105,19 +102,15 @@ handle_info({tcp, _Socket, Data}, State) ->
 	NewModState = Module:recv(ModState, Data),
 	{noreply, State#state{module_state = NewModState}};
 
-%% @private
 handle_info({tcp_closed, _Socket}, State) ->
 	{stop, normal, State};
 
-%% @private
 handle_info({'DOWN', _, _, _, normal}, State) ->
 	{noreply, State#state{buffer_pid = undefined}};
 
-%% @private
 handle_info({'DOWN', _, _, _, _}, State) ->
 	{stop, normal, State};
 
-%% @private
 handle_info(_Info, State) ->
 	{noreply, State}.
 

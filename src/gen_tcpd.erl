@@ -11,7 +11,8 @@
 -export([start/2, stop/1]).
 % API
 -export([bind/2, bind/3, unbind/1,
-	send/2, activate/1, activate/2, close/1]).
+	send/2, activate/1, activate/2,
+	send_activate/2, send_activate/3, close/1]).
 
 %% ---------------------------------------------------------------------
 %% Public methods (открытые методы).
@@ -93,6 +94,18 @@ activate(Pid) ->
 -spec activate(pid(), pos_integer()) -> ok.
 activate(Pid, BufferSize) ->
 	gen_server:cast(Pid, {activate, BufferSize}).
+
+%% @doc Send data and then activate socket
+-spec send_activate(pid(), iodata()) -> ok.
+send_activate(Pid, Message) ->
+	send(Pid, Message),
+	activate(Pid).
+
+%% @doc Send data and then activate socket
+-spec send_activate(pid(), iodata(), pos_integer()) -> ok.
+send_activate(Pid, Message, BufferSize) ->
+	send(Pid, Message),
+	activate(Pid, BufferSize).
 
 %% @doc Closes connection.
 -spec close(pid()) -> ok.
