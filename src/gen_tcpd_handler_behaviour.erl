@@ -15,8 +15,7 @@
 -export([behaviour_info/1]).
 
 behaviour_info(callbacks) ->
-    [{recv, 2}, {stop, 1}];
+	[{recv, 2}, {stop, 1}];
 
 behaviour_info(_) ->
-    undefined.
-
+	undefined.

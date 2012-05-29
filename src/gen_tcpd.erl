@@ -7,8 +7,12 @@
 -created_by('Stanislav Seletskiy <s.seletskiy@office.ngs.ru>').
 -behaviour(application).
 
+% application API
 -export([start/2, stop/1]).
--export([bind/2, bind/3, unbind/1]).
+% API
+-export([bind/2, bind/3, unbind/1,
+	send/2, activate/1, activate/2,
+	send_activate/2, send_activate/3, close/1]).
 
 %% ---------------------------------------------------------------------
 %% Public methods (открытые методы).
@@ -53,7 +57,7 @@ bind(Port, MFA) ->
 %%                in seconds for `max_restarts' (default - 60);</li>
 %%          </ul>
 %%        </li>
-%%        <li>`listener' describes listen socket options:
+%%        <li>`socket' describes listen socket options:
 %%          <ul>
 %%            <li>all options from `inet:setopts()' except `active'.</li>
 %%          </ul>
@@ -71,3 +75,39 @@ bind(Port, MFA, Options) ->
 unbind(Port) ->
 	supervisor:terminate_child(gen_tcpd_pools_sup,
 		whereis(gen_tcpd_pools_sup:make_child_name(Port))).
+
+%% @doc Sends `Data' to socket, linked to connection with pid `Pid'.
+-spec send(pid(), list()) -> ok.
+send(Pid, Data) ->
+	gen_server:cast(Pid, {send, Data}).
+
+%% @doc Switch socket to active state.
+%%      `recv/2' from callback module will be callbed,
+%%      when some data arrived at socket.
+-spec activate(pid()) -> ok.
+activate(Pid) ->
+	activate(Pid, 0).
+
+%% @doc Switches socket to active state in buffered mode.
+%%      `recv/2' from callback module will be called only after
+%%      `BufferSize' bytes was arrived at socket.
+-spec activate(pid(), pos_integer()) -> ok.
+activate(Pid, BufferSize) ->
+	gen_server:cast(Pid, {activate, BufferSize}).
+
+%% @doc Send data and then activate socket
+-spec send_activate(pid(), iodata()) -> ok.
+send_activate(Pid, Message) ->
+	send(Pid, Message),
+	activate(Pid).
+
+%% @doc Send data and then activate socket
+-spec send_activate(pid(), iodata(), pos_integer()) -> ok.
+send_activate(Pid, Message, BufferSize) ->
+	send(Pid, Message),
+	activate(Pid, BufferSize).
+
+%% @doc Closes connection.
+-spec close(pid()) -> ok.
+close(Pid) ->
+	gen_server:cast(Pid, close).

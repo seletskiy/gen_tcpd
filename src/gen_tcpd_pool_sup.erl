@@ -22,7 +22,7 @@ start_link(Port, MFA, Options) ->
 
 init([Port, MFA, Options]) ->
 	PoolOptions = proplists:get_value(pool, Options, []),
-	ListenerOptions = proplists:get_value(listener, Options, []),
+	ListenerOptions = proplists:get_value(socket, Options, []),
 	MaxRestarts = proplists:get_value(max_restarts, PoolOptions, ?DEFAULT_MAX_R),
 	RestartsTime = proplists:get_value(restarts_time, PoolOptions, ?DEFAULT_MAX_T),
 	WorkersCount = proplists:get_value(workers, PoolOptions, ?DEFAULT_WORKERS),
